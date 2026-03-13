@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VINZZXHOST - ADMIN PANEL</title>
+    <style>
+        body { background: #000; color: #0f4; font-family: 'Courier New', monospace; padding: 20px; }
+        .container { max-width: 500px; margin: auto; }
+        .card { background: #0a0a0a; border: 1px solid #0f4; padding: 20px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 0 10px #0f4; }
+        h2 { text-align: center; border-bottom: 2px solid #0f4; padding-bottom: 10px; }
+        input { width: 100%; padding: 12px; background: #000; border: 1px solid #0f4; color: #0f4; margin-bottom: 10px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #0f4; color: #000; border: none; font-weight: bold; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 12px; }
+        th, td { border: 1px solid #0f4; padding: 8px; text-align: left; }
+        .status-active { color: #0f4; }
+        .status-expired { color: red; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <h2>[ ADMIN CONTROL ]</h2>
+        <label>Gmail Buyer:</label>
+        <input type="email" id="buyerEmail" placeholder="contoh@gmail.com">
+        
+        <label>Limit Pengiriman:</label>
+        <input type="number" id="buyerLimit" value="500">
+        
+        <label>Masa Aktif (Hari):</label>
+        <input type="number" id="buyerDays" value="30">
+        
+        <button onclick="tambahAkses()">BUKA AKSES BUYER</button>
+    </div>
+
+    <div class="card">
+        <h3>LIST AKSES AKTIF</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Limit</th>
+                    <th>Exp</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="listAkses"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function formatTgl(date) {
+        return date.toLocaleDateString('id-ID');
+    }
+
+    function simpanData() {
+        localStorage.setItem('data_pembeli_vinzz', document.getElementById('listAkses').innerHTML);
+    }
+
+    window.onload = function() {
+        const data = localStorage.getItem('data_pembeli_vinzz');
+        if (data) document.getElementById('listAkses').innerHTML = data;
+    };
+
+    function tambahAkses() {
+        const email = document.getElementById('buyerEmail').value;
+        const limit = document.getElementById('buyerLimit').value;
+        const hari = document.getElementById('buyerDays').value;
+        
+        if (!email) return alert("Email buyer harus diisi!");
+
+        const tglExp = new Date();
+        tglExp.setDate(tglExp.getDate() + parseInt(hari));
+
+        const tbody = document.getElementById('listAkses');
+        const row = tbody.insertRow(0);
+        row.innerHTML = `
+            <td>${email}</td>
+            <td>${limit}</td>
+            <td>${formatTgl(tglExp)}</td>
+            <td><button style="background:red; color:white; padding:2px 5px;" onclick="hapus(this)">X</button></td>
+        `;
+        
+        simpanData();
+        alert("Akses berhasil dibuka untuk " + email);
+    }
+
+    function hapus(btn) {
+        if(confirm("Hapus akses?")) {
+            btn.closest('tr').remove();
+            simpanData();
+        }
+    }
+</script>
+</body>
+</html>
+
